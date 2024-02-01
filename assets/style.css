@@ -1,0 +1,158 @@
+:root {
+    --beige: #ffebc7;
+    --darkPink: #ef61a1;
+    --bPink: #fddddd;
+    --mPink: #f7bcbc;
+    --mpinko: rgb(247, 188, 188, .7);
+  }
+
+
+body {
+    background-color: var(--bPink);
+}
+
+#logo > img {
+    width: 200px;
+    margin:auto;
+    display: block;
+}
+
+#logo {
+}
+
+#header {
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#icon-container {
+    display:flex;
+    gap: 8px;
+}
+
+#icon-container>div>svg>path {
+    fill: var(--darkPink);
+}
+
+#icon-container>div>svg>path:hover {
+    fill: red;
+}
+
+#container {
+    background-image: url("images/idols/mina1.jpg");
+    background-position: center center;
+    background-size:cover;
+    background-repeat: no-repeat;
+    border-radius:18px;
+    border: solid var(--mPink) 4px;
+    background-size: 360px;
+    width: 360px;
+    height: 360px;
+    margin: auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows:  1fr 1fr 1fr 1fr 1fr;
+    gap: 0px;
+}
+
+#container > div {
+    background-color: var(--beige);
+}
+
+#container > .uncovered {
+    background-color:transparent;
+}
+
+.top-left {
+    border-top-left-radius: 15px;
+}
+
+.top-right {
+    border-top-right-radius: 15px;
+}
+
+.bottom-right {
+    border-bottom-right-radius: 15px;
+}
+.bottom-left {
+    border-bottom-left-radius: 15px;
+}
+
+#time {
+    color:var(--darkPink);
+    text-align: center;
+    font-size: 64px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+
+.intro {
+    background-color: var(--beige);
+    position:absolute;
+    width:fit-content;
+    left: 50%;
+    margin-left: -250px;
+    margin-top: 64px;
+    
+}
+
+.intro>img {
+    width:500px;
+}
+
+body>.none{
+    left:-250px;
+    transition-property: all;
+    transition-timing-function:ease-out;
+    transition-duration: 2s;
+}
+
+#time {
+    width: 360px;
+    height: 64px;
+    background-color: var(--mpinko);
+    margin: auto;
+    border-radius:18px;
+    margin-bottom: 8px;
+}
+
+#answer {
+    width: 360px;
+    height: 64px;
+    background-color: var(--mpinko);
+    margin: auto;
+    border-radius: 18px;
+    margin-top:8px;
+    display:flex;
+    padding:8px;
+}
+
+#answer>input {
+    flex:1;
+    border: none;
+    background-color: transparent;
+    font-size: 24px;
+    color: var(--darkPink);
+    text-align: center;
+}
+
+#answer>input:focus {
+    flex:1;
+    border: none;
+    outline:none;
+}
+
+#answer>button {
+    width: 64px;
+    border-radius: 18px;
+    background-color: var(--bPink);
+    border: solid 2px var(--darkPink);
+}
+
+#answer>button>svg>path {
+    fill: var(--darkPink)
+}
