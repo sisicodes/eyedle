@@ -52,13 +52,25 @@ class Board {
     }
 }
 
-class Ready {
+class newGame {
+
+
+    click() {
+        this.button.classList.add('none');
+        this.clicked = true;
+        Board.uncoverAll();
+        stopwatchSingleton.startTimer();
+    }
+
+};
+
+class Ready extends newGame {
 
     constructor() {
-        this.ready = document.getElementById('intro');
+        super();
+        this.button = document.getElementById('intro');
         this.readyImg = document.getElementById('ready');
         this.clicked = false;
-        this.stopwatch = new Stopwatch();
 
         ready.addEventListener('mouseover', this.hover.bind(this));
         ready.addEventListener('mouseleave', this.unhover.bind(this));
@@ -77,14 +89,16 @@ class Ready {
         
     }
 
-    click() {
-        this.ready.classList.add('none');
-        this.clicked = true;
-        Board.uncoverAll();
-        this.stopwatch.startTimer();
-    }
-
 };
+
+class Next extends newGame {
+    constructor() {
+        super();
+        this.button = document.getElementById('next')
+        this.clicked = false;
+        next.addEventListener('click', this.click.bind(this));
+    }
+}
 
 class Submit {
     constructor() {
@@ -93,9 +107,11 @@ class Submit {
     }
 
     correctAnswer() {
-        ready.stopwatch.stopTimer();
+        stopwatchSingleton.stopTimer();
         console.log('correct answer')
         Board.uncoverImm();
+        this.submit.id= 'next';
+        this.next = new Next();
     }
 
     isCorrect() {
@@ -111,6 +127,10 @@ class Submit {
         } else {
             console.log('not an idol');
         }
+    }
+
+    changeID() {
+
     }
 }
 
@@ -154,9 +174,14 @@ class Stopwatch {
         this.on = undefined;
     }
 
+    refreshTimer() {
+        this.second = '00';    
+        this.centi = '00';
+    }
+
 
 }
 
 ready = new Ready();
-
 submit = new Submit();
+stopwatchSingleton = new Stopwatch();
