@@ -3,12 +3,10 @@ class Board {
     static imgList = ["url('assets/images/idols/sana1.jpg')", "url('assets/images/idols/mina1.jpg')", "url('assets/images/idols/tzuyu1.jpg')"];
     static currentImg = this.imgList[0];
     static photoCounter = 0;
-    //static keep = true;
     static shuffledArray = [];
     static counter = 0;
 
     static initializeBoard() {
-        //Board.keep = true;
         this.updatePhoto();
         console.log('initialize')
 
@@ -35,9 +33,6 @@ class Board {
     }
 
     static shuffleArray(array) {
-        //const index = array.indexOf(17); //hardcoded for now
-        //array.splice(index,1); //opportunity here to protect if it is not found in the array
-        //let shuffleArray = [];
         Board.shuffledArray = [];
         let shuffleIndex;
         let shuffleValue;
@@ -59,7 +54,6 @@ class Board {
 
     static recoverAll(loc) {
         const allPicDiv = document.getElementById('container').getElementsByTagName('*');
-       //Board.keep = true;
         Board.cancelUncover();
         for (const element of allPicDiv) {
             element.classList.remove('uncovered');
@@ -69,6 +63,8 @@ class Board {
     static uncoverAll() {
         let array = Board.createArray();
         Board.shuffledArray = Board.shuffleArray(array)
+        Board.uncoverEach(Board.shuffledArray[Board.counter])
+        Board.counter++;
         Board.un  = setInterval(Board.uncoverAll1,1000);
 
 
@@ -100,7 +96,6 @@ class newGame {
 
 
     click() {
-        //this.button.classList.add('none');
         this.clicked = true;
         Board.uncoverAll();
         stopwatchSingleton.resetTimer();
@@ -147,7 +142,6 @@ class Next extends newGame {
         this.clicked = false;
         this.button = document.getElementById('next');
         next.addEventListener('click', this.nextClick.bind(this));
-        //next.addEventListener('click', this.click.bind(this));
     }
 
     nextClick() {
@@ -172,10 +166,13 @@ class Submit {
         this.submit = document.getElementById('submit');
         submit.addEventListener('click', this.isCorrect.bind(this));
         this.input = document.getElementById('answerText');
+        this.overlay = document.getElementById('overlay');
     }
 
     correctAnswer() {
         stopwatchSingleton.stopTimer();
+        this.overlay.classList.add('right');
+        setTimeout(this.restoreColor,200);
         console.log('correct answer')
         Board.uncoverImm();
         next.button.classList.remove('hidden');
@@ -183,6 +180,18 @@ class Submit {
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
 
+    }
+
+    wrongAnswer() {
+        this.overlay.classList.add('wrong');
+        setTimeout(this.restoreColor,200);
+
+
+    }
+
+    restoreColor() {
+        this.overlay.classList.remove('wrong');
+        this.overlay.classList.remove('right');
     }
 
     isCorrect() {
@@ -193,9 +202,12 @@ class Submit {
             console.log('an idol!');
             if (Board.currentImg.includes(this.answer.toLowerCase())) {
                 this.correctAnswer();
+            } else {
+                this.wrongAnswer();
             }
         } else {
             console.log('not an idol');
+            this.wrongAnswer();
         }
     }
 
@@ -218,6 +230,7 @@ class Stopwatch {
             this.second = (parseInt(this.second)+1).toString();
             if (this.second.length ==1) {
                 this.second = '0'+this.second;
+                console.log(this.second)
             }
 
         } else if (parseInt(this.centi)<99) {
@@ -226,6 +239,9 @@ class Stopwatch {
                 this.centi = '0' +this.centi;
             }
         };
+        if (this.second=='30') {
+            this.stopTimer();
+        }
         this.time.textContent = `${this.second}:${this.centi}`;
         return [this.second,this.centi];
     }
@@ -234,8 +250,6 @@ class Stopwatch {
         console.log('start timer');
         let i = 1;
         this.on = setInterval(this.incrementTime.bind(this),10);
-        setTimeout(this.stopTimer.bind(this), 100000);
-
     }
 
     stopTimer() {

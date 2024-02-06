@@ -4,6 +4,9 @@
     --bPink: #fddddd;
     --mPink: #f7bcbc;
     --mpinko: rgb(247, 188, 188, .7);
+    --wrong: rgb(255,0,0, .5);
+    --right: rgb(124,252,0, .5);
+
   }
 
 
@@ -62,6 +65,26 @@ body {
 
 #container > div {
     background-color: var(--beige);
+}
+
+#overlay {
+    position:absolute;
+    height: 360px;
+    width: 360px;
+    border-radius:18px;
+    display:none;
+}
+
+#overlay.wrong {
+    transition: ease-in-out .2s;
+    display:block;
+    background-color: var(--wrong);
+}
+
+#overlay.right {
+    transition: ease-in-out .2s;
+    display:block;
+    background-color: var(--right);
 }
 
 #container > .uncovered {
@@ -157,4 +180,12 @@ body>.none{
 
 #answer>button>svg>path {
     fill: var(--darkPink)
+}
+
+#next.hidden, #submit.hidden, #answerText.hidden {
+    display:none;
+}
+
+#next {
+    flex:1;
 }
