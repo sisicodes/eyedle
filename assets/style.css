@@ -87,6 +87,14 @@ body {
     background-color: var(--right);
 }
 
+#overlay.won {
+    transition: ease-in-out .2s;
+    display:block;
+    background-image: url('images/borders/border1.png');
+    background-size: 360px;
+    background-color: transparent;
+}
+
 #container > .uncovered {
     background-color:transparent;
 }

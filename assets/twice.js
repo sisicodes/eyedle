@@ -47,9 +47,6 @@ class Board {
     static uncoverEach(loc) {
             const picDiv = document.getElementById(loc.toString());
             picDiv.classList.add('uncovered');
-        
-      
-
     }
 
     static recoverAll(loc) {
@@ -66,9 +63,6 @@ class Board {
         Board.uncoverEach(Board.shuffledArray[Board.counter])
         Board.counter++;
         Board.un  = setInterval(Board.uncoverAll1,1000);
-
-
-
     }
 
     static uncoverAll1() {
@@ -93,7 +87,6 @@ class Board {
 }
 
 class newGame {
-
 
     click() {
         this.clicked = true;
@@ -154,6 +147,7 @@ class Next extends newGame {
         this.button.classList.add('hidden');
         submit.submit.classList.remove('hidden');
         submit.input.classList.remove('hidden');
+        submit.overlay.classList.remove('won');
     }
 
     nextDeactivated() {
@@ -167,9 +161,11 @@ class Submit {
         submit.addEventListener('click', this.isCorrect.bind(this));
         this.input = document.getElementById('answerText');
         this.overlay = document.getElementById('overlay');
+        this.wrongCounter = 0;
     }
 
     correctAnswer() {
+        this.wrongCounter = 0;
         stopwatchSingleton.stopTimer();
         this.overlay.classList.add('right');
         setTimeout(this.restoreColor,200);
@@ -179,14 +175,37 @@ class Submit {
         this.input.value = '';
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
+        setTimeout(this.addBorder,200)
 
+    }
+
+    addBorder() {
+        this.overlay.classList.add('won');
     }
 
     wrongAnswer() {
         this.overlay.classList.add('wrong');
         setTimeout(this.restoreColor,200);
+        stopwatchSingleton.penaltyIncrement();
+        this.wrongCounter++;
+        if (this.wrongCounter ==3) {
+            setTimeout(this.wrongFinal.bind(this),200);
+        }
 
 
+    }
+
+    wrongFinal() {
+        this.wrongCounter = 0;
+        console.log('this is finally wrong');
+        this.overlay.classList.add('wrong');
+        Board.uncoverImm();
+        stopwatchSingleton.stopTimer();
+        next.button.classList.remove('hidden');
+        //this.input.value = '';
+        this.submit.classList.add('hidden');
+        this.input.classList.add('hidden');
+        
     }
 
     restoreColor() {
@@ -210,10 +229,6 @@ class Submit {
             this.wrongAnswer();
         }
     }
-
-    changeID() {
-
-    }
 }
 
 class Stopwatch {
@@ -230,7 +245,6 @@ class Stopwatch {
             this.second = (parseInt(this.second)+1).toString();
             if (this.second.length ==1) {
                 this.second = '0'+this.second;
-                console.log(this.second)
             }
 
         } else if (parseInt(this.centi)<99) {
@@ -239,15 +253,18 @@ class Stopwatch {
                 this.centi = '0' +this.centi;
             }
         };
-        if (this.second=='30') {
+        if (this.second=='50') {
             this.stopTimer();
         }
         this.time.textContent = `${this.second}:${this.centi}`;
         return [this.second,this.centi];
     }
 
+    penaltyIncrement() {
+        this.second = (parseInt(this.second)+10).toString();
+    }
+
     startTimer() {
-        console.log('start timer');
         let i = 1;
         this.on = setInterval(this.incrementTime.bind(this),10);
     }
@@ -265,7 +282,30 @@ class Stopwatch {
 
 }
 
+class Photo {
+    constructor() {
+        this.url = ''
+        this.played = false;
+        this.won = false;
+        this.member = '';
+        this.time = null;
+        this.penalties = 0;
+    }
+}
+
+function createPhotoArray() {
+    let photoArray = [];
+    let i= 0;
+    for (const element of Board.imgList) {
+        photoArray.push(new Photo());
+        photoArray[i].url = element;
+        i++;
+    }
+    return photoArray;
+}
+
 ready = new Ready();
 submit = new Submit();
 next = new Next();
 stopwatchSingleton = new Stopwatch();
+let photos = createPhotoArray();
