@@ -1,6 +1,7 @@
 //import myJson from './idolData.json' assert {type: 'json'};
 //console.log(myJson);
 
+let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
 
 class Board {
     
@@ -288,7 +289,8 @@ class Stopwatch {
 
 class Photo {
     constructor() {
-        this.url = ''
+        this.id = '';
+        this.url = '';
         this.played = false;
         this.won = false;
         this.member = '';
@@ -297,22 +299,33 @@ class Photo {
     }
 }
 
-function createPhotoArray() {
+
+function createPhotoArray2() {
     let photoArray = [];
-    let i= 0;
-    for (const element of Board.imgList) {
-        photoArray.push(new Photo());
-        photoArray[i].url = element;
-        i++;
+    for (const element of imgListJson) {
+        console.log('in for')
+        photoArray[element] = new Photo();
+        photoArray[element].id = element;
+        photoArray[element].url = createURL(element);
+        photoArray[element].member = getIdol(element);
     }
     return photoArray;
+}
+
+function createURL(id) {
+    return "url('assets/images/idols/" + id + "')";
+}
+
+function getIdol(id) {
+    const idolMatch = id.match(/^(.*?)(?=\d)/);
+    return idolMatch[1];
 }
 
 let ready = new Ready();
 let submit = new Submit();
 let next = new Next();
 let stopwatchSingleton = new Stopwatch();
-let photos = createPhotoArray();
+let photos = createPhotoArray2();
 
 
 // ...your code using `data` here...
