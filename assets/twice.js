@@ -1,3 +1,7 @@
+//import myJson from './idolData.json' assert {type: 'json'};
+//console.log(myJson);
+
+
 class Board {
     
     static imgList = ["url('assets/images/idols/sana1.jpg')", "url('assets/images/idols/mina1.jpg')", "url('assets/images/idols/tzuyu1.jpg')"];
@@ -8,8 +12,6 @@ class Board {
 
     static initializeBoard() {
         this.updatePhoto();
-        console.log('initialize')
-
     }
 
     static updateBoard () {
@@ -105,10 +107,10 @@ class Ready extends newGame {
         this.readyImg = document.getElementById('ready');
         this.clicked = false;
 
-        ready.addEventListener('mouseover', this.hover.bind(this));
-        ready.addEventListener('mouseleave', this.unhover.bind(this));
-        ready.addEventListener('click', this.click.bind(this));
-        ready.addEventListener('click', this.readyClick.bind(this));
+        this.button.addEventListener('mouseover', this.hover.bind(this));
+        this.button.addEventListener('mouseleave', this.unhover.bind(this));
+        this.button.addEventListener('click', this.click.bind(this));
+        this.button.addEventListener('click', this.readyClick.bind(this));
         Board.initializeBoard();
     }
 
@@ -134,7 +136,7 @@ class Next extends newGame {
         super();
         this.clicked = false;
         this.button = document.getElementById('next');
-        next.addEventListener('click', this.nextClick.bind(this));
+        this.button.addEventListener('click', this.nextClick.bind(this));
     }
 
     nextClick() {
@@ -158,7 +160,7 @@ class Next extends newGame {
 class Submit {
     constructor() {
         this.submit = document.getElementById('submit');
-        submit.addEventListener('click', this.isCorrect.bind(this));
+        this.submit.addEventListener('click', this.isCorrect.bind(this));
         this.input = document.getElementById('answerText');
         this.overlay = document.getElementById('overlay');
         this.wrongCounter = 0;
@@ -282,6 +284,8 @@ class Stopwatch {
 
 }
 
+//organization for multiple photos
+
 class Photo {
     constructor() {
         this.url = ''
@@ -304,8 +308,11 @@ function createPhotoArray() {
     return photoArray;
 }
 
-ready = new Ready();
-submit = new Submit();
-next = new Next();
-stopwatchSingleton = new Stopwatch();
+let ready = new Ready();
+let submit = new Submit();
+let next = new Next();
+let stopwatchSingleton = new Stopwatch();
 let photos = createPhotoArray();
+
+
+// ...your code using `data` here...
