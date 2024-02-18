@@ -1,14 +1,12 @@
 //import myJson from './idolData.json' assert {type: 'json'};
 //console.log(myJson);
 
-let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
+//let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
+let imgListJson = ["jihyo1.jpg"];
+
 
 class Board {
-    
-    //static imgList = ["url('assets/images/idols/sana1.jpg')", "url('assets/images/idols/mina1.jpg')", "url('assets/images/idols/tzuyu1.jpg')"];
-    //static currentImg = this.imgList[0];
     static currentImg = null;
-    //static photoCounter = 0;
     static shuffledArray = [];
     static counter = 0;
 
@@ -21,14 +19,14 @@ class Board {
     };
 
     static updatePhoto() {
-        //Board.currentImg = this.imgList[this.photoCounter];
         Board.currentImg = this.findCurrentPhoto();
-        //console.log(`current image: ${Board.currentImg}`)
-        Board.container = document.getElementById('container');
-        //Board.container.style.backgroundImage =  this.currentImg;
-        Board.container.style.backgroundImage = this.currentImg.url;
-        //Board.photoCounter++;
-        Board.currentImg.played = true;
+        if (Board.currentImg==false) {
+            console.log('end of game')
+        } else {
+            Board.container = document.getElementById('container');
+            Board.container.style.backgroundImage = this.currentImg.url;
+            Board.currentImg.played = true;
+        };
 
     }
 
@@ -40,6 +38,7 @@ class Board {
                 return photo;
             }
         }
+        return false;
     }
 
     static createArray() {
@@ -102,6 +101,17 @@ class Board {
     static cancelUncover() {
         clearInterval(Board.un);
     };
+
+    static endGame() {
+        const outroDiv = document.getElementById('outro');
+        outroDiv.classList.remove('hidden');
+        const mainDiv = document.getElementById('time');
+        mainDiv.classList.add('hidden');
+        const containerDiv = document.getElementById('container');
+        containerDiv.classList.add('hidden');
+        const answerDiv = document.getElementById('answer');
+        answerDiv.classList.add('hidden');
+    };
 }
 
 class newGame {
@@ -158,14 +168,18 @@ class Next extends newGame {
     nextClick() {
         console.log('next click');
         Board.initializeBoard();
-        Board.recoverAll();
-        Board.uncoverAll();
-        stopwatchSingleton.resetTimer();
-        stopwatchSingleton.startTimer();
-        this.button.classList.add('hidden');
-        submit.submit.classList.remove('hidden');
-        submit.input.classList.remove('hidden');
-        submit.overlay.classList.remove('won');
+        if (Board.currentImg != false) {
+            Board.recoverAll();
+            Board.uncoverAll();
+            stopwatchSingleton.resetTimer();
+            stopwatchSingleton.startTimer();
+            this.button.classList.add('hidden');
+            submit.submit.classList.remove('hidden');
+            submit.input.classList.remove('hidden');
+            submit.overlay.classList.remove('won');
+        } else {
+            Board.endGame();
+        };
     }
 
     nextDeactivated() {
@@ -238,24 +252,12 @@ class Submit {
 
     isCorrect() {
         this.answer = document.getElementById('answerText').value;
-        this.possible = ['tzuyu', 'mina', 'sana'];
+        //this.possible = ['tzuyu', 'mina', 'sana'];
         if (this.answer == Board.currentImg.member) {
             this.correctAnswer();
         } else {
             this.wrongAnswer();
         };
-        /*console.log(`current image is ${Board.currentImg}`)
-        if (this.possible.includes(this.answer.toLowerCase())) {
-            console.log('an idol!');
-            if (Board.currentImg.includes(this.answer.toLowerCase())) {
-                this.correctAnswer();
-            } else {
-                this.wrongAnswer();
-            }
-        } else {
-            console.log('not an idol');
-            this.wrongAnswer();
-        }*/
     }
 }
 
