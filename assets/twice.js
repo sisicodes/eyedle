@@ -5,9 +5,10 @@ let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
 
 class Board {
     
-    static imgList = ["url('assets/images/idols/sana1.jpg')", "url('assets/images/idols/mina1.jpg')", "url('assets/images/idols/tzuyu1.jpg')"];
-    static currentImg = this.imgList[0];
-    static photoCounter = 0;
+    //static imgList = ["url('assets/images/idols/sana1.jpg')", "url('assets/images/idols/mina1.jpg')", "url('assets/images/idols/tzuyu1.jpg')"];
+    //static currentImg = this.imgList[0];
+    static currentImg = null;
+    //static photoCounter = 0;
     static shuffledArray = [];
     static counter = 0;
 
@@ -20,13 +21,27 @@ class Board {
     };
 
     static updatePhoto() {
-        Board.currentImg = this.imgList[this.photoCounter];
-        console.log(`current image: ${Board.currentImg}`)
+        //Board.currentImg = this.imgList[this.photoCounter];
+        Board.currentImg = this.findCurrentPhoto();
+        //console.log(`current image: ${Board.currentImg}`)
         Board.container = document.getElementById('container');
-        Board.container.style.backgroundImage =  this.currentImg;
-        Board.photoCounter++;
+        //Board.container.style.backgroundImage =  this.currentImg;
+        Board.container.style.backgroundImage = this.currentImg.url;
+        //Board.photoCounter++;
+        Board.currentImg.played = true;
 
     }
+
+    static findCurrentPhoto() {
+        console.log('test')
+        for (const photo of photos) {
+            console.log(photo);
+            if (!photo.played) {
+                return photo;
+            }
+        }
+    }
+
     static createArray() {
         let numberArray = []
         for (let i = 1; i<26; i++) {
@@ -174,11 +189,13 @@ class Submit {
         setTimeout(this.restoreColor,200);
         console.log('correct answer')
         Board.uncoverImm();
+        Board.currentImg.time = stopwatchSingleton.getTime();
+        Board.currentImg.won = true;
         next.button.classList.remove('hidden');
         this.input.value = '';
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
-        setTimeout(this.addBorder,200)
+        setTimeout(this.addBorder,200);
 
     }
 
@@ -190,6 +207,7 @@ class Submit {
         this.overlay.classList.add('wrong');
         setTimeout(this.restoreColor,200);
         stopwatchSingleton.penaltyIncrement();
+        Board.currentImg.penalties+=1;
         this.wrongCounter++;
         if (this.wrongCounter ==3) {
             setTimeout(this.wrongFinal.bind(this),200);
@@ -204,10 +222,12 @@ class Submit {
         this.overlay.classList.add('wrong');
         Board.uncoverImm();
         stopwatchSingleton.stopTimer();
+        Board.currentImg.time = stopwatchSingleton.getTime();
         next.button.classList.remove('hidden');
         //this.input.value = '';
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
+        Board.currentImg.won = false;
         
     }
 
@@ -219,7 +239,12 @@ class Submit {
     isCorrect() {
         this.answer = document.getElementById('answerText').value;
         this.possible = ['tzuyu', 'mina', 'sana'];
-        console.log(`current image is ${Board.currentImg}`)
+        if (this.answer == Board.currentImg.member) {
+            this.correctAnswer();
+        } else {
+            this.wrongAnswer();
+        };
+        /*console.log(`current image is ${Board.currentImg}`)
         if (this.possible.includes(this.answer.toLowerCase())) {
             console.log('an idol!');
             if (Board.currentImg.includes(this.answer.toLowerCase())) {
@@ -230,7 +255,7 @@ class Submit {
         } else {
             console.log('not an idol');
             this.wrongAnswer();
-        }
+        }*/
     }
 }
 
@@ -282,6 +307,11 @@ class Stopwatch {
         this.centi = '00';
     }
 
+    getTime() {
+        let timeStr = this.second + '.' + this.centi;
+        return parseFloat(timeStr);
+    }
+
 
 }
 
@@ -300,14 +330,15 @@ class Photo {
 }
 
 
-function createPhotoArray2() {
+function createPhotoArray() {
     let photoArray = [];
+    let counter = 0;
     for (const element of imgListJson) {
-        console.log('in for')
-        photoArray[element] = new Photo();
-        photoArray[element].id = element;
-        photoArray[element].url = createURL(element);
-        photoArray[element].member = getIdol(element);
+        photoArray[counter] = new Photo();
+        photoArray[counter].id = element;
+        photoArray[counter].url = createURL(element);
+        photoArray[counter].member = getIdol(element);
+        counter++;
     }
     return photoArray;
 }
@@ -321,11 +352,11 @@ function getIdol(id) {
     return idolMatch[1];
 }
 
+let photos = createPhotoArray();
 let ready = new Ready();
 let submit = new Submit();
 let next = new Next();
 let stopwatchSingleton = new Stopwatch();
-let photos = createPhotoArray2();
 
 
 // ...your code using `data` here...
