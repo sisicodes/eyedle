@@ -1,9 +1,77 @@
 //import myJson from './idolData.json' assert {type: 'json'};
 //console.log(myJson);
 
-//let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
-let imgListJson = ["jihyo1.jpg"];
+let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
+//let imgListJson = ["jihyo1.jpg"];
 
+class Grid {
+    static shuffledArray = [];
+    static counter = 0;
+    static gridSize = 25;
+    static oneSec = 1000;
+    
+    static createArray() {
+        let numberArray = []
+        for (let i = 1; i<=this.gridSize; i++) {
+            numberArray.push(i);
+        }
+        return numberArray
+    }
+
+    static shuffleArray(array) {
+        this.shuffledArray = [];
+        let shuffleIndex;
+        let shuffleValue;
+        for (let i=0; 1<array.length+1; i++) {
+            shuffleIndex = Math.floor(Math.random() * array.length);
+            shuffleValue = array.splice(shuffleIndex,1);
+            Grid.shuffledArray.push(shuffleValue[0]);
+        };
+        return Grid.shuffledArray;
+    }
+
+    static uncoverEach(loc) {
+            const picDiv = document.getElementById(loc.toString());
+            picDiv.classList.add('uncovered');
+    }
+
+    static recoverAll(loc) {
+        const allPicDiv = document.getElementById('container').getElementsByTagName('*');
+        Grid.cancelUncover();
+        for (const element of allPicDiv) {
+            element.classList.remove('uncovered');
+        };
+    };
+
+    static uncoverAll() {
+        let array = Grid.createArray();
+        Grid.shuffledArray = Grid.shuffleArray(array)
+        Grid.uncoverEach(Grid.shuffledArray[Grid.counter]) //uncover first before interval
+        Grid.counter++;
+        Grid.un  = setInterval(Grid.uncoverRest,this.oneSec);
+    }
+
+    static uncoverRest() {
+        Grid.uncoverEach(Grid.shuffledArray[Grid.counter]);
+        Grid.counter++;
+        console.log('in uncover helper');
+        if (Grid.counter==this.gridSize) {
+            Grid.cancelUncover();
+        }
+    }
+
+    static uncoverImm() {
+        for (const element of Grid.shuffledArray) {
+            this.uncoverEach(element);
+        }
+        Grid.cancelUncover();
+    }
+
+    static cancelUncover() {
+        clearInterval(Grid.un);
+    };
+
+};
 
 class Board {
     static currentImg = null;
@@ -41,68 +109,9 @@ class Board {
         return false;
     }
 
-    static createArray() {
-        let numberArray = []
-        for (let i = 1; i<26; i++) {
-            numberArray.push(i);
-        }
-        return numberArray
-    }
+  
 
-    static shuffleArray(array) {
-        Board.shuffledArray = [];
-        let shuffleIndex;
-        let shuffleValue;
-        for (let i=0; 1<array.length+1; i++) {
-            shuffleIndex = Math.floor(Math.random() * array.length);
-            shuffleValue = array.splice(shuffleIndex,1);
-            Board.shuffledArray.push(shuffleValue[0]);
-        };
-        return Board.shuffledArray;
-    }
-
-    static uncoverEach(loc) {
-            const picDiv = document.getElementById(loc.toString());
-            picDiv.classList.add('uncovered');
-    }
-
-    static recoverAll(loc) {
-        const allPicDiv = document.getElementById('container').getElementsByTagName('*');
-        Board.cancelUncover();
-        for (const element of allPicDiv) {
-            element.classList.remove('uncovered');
-        };
-    };
-
-    static uncoverAll() {
-        let array = Board.createArray();
-        Board.shuffledArray = Board.shuffleArray(array)
-        Board.uncoverEach(Board.shuffledArray[Board.counter])
-        Board.counter++;
-        Board.un  = setInterval(Board.uncoverAll1,1000);
-    }
-
-    static uncoverAll1() {
-        Board.uncoverEach(Board.shuffledArray[Board.counter]);
-        Board.counter++;
-        console.log('in uncover helper');
-        if (Board.counter==25) {
-            Board.cancelUncover();
-        }
-    }
-
-    static uncoverImm() {
-        for (const element of Board.shuffledArray) {
-            this.uncoverEach(element);
-        }
-        Board.cancelUncover();
-    }
-
-    static cancelUncover() {
-        clearInterval(Board.un);
-    };
-
-    static endGame() {
+    static hideBoard() {
         const outroDiv = document.getElementById('outro');
         outroDiv.classList.remove('hidden');
         const mainDiv = document.getElementById('time');
@@ -117,8 +126,10 @@ class Board {
 class newGame {
 
     click() {
+        Board.initializeBoard();
+        submit.nameDisplay.textContent = '';
         this.clicked = true;
-        Board.uncoverAll();
+        Grid.uncoverAll();
         stopwatchSingleton.resetTimer();
         stopwatchSingleton.startTimer();
     }
@@ -137,7 +148,7 @@ class Ready extends newGame {
         this.button.addEventListener('mouseleave', this.unhover.bind(this));
         this.button.addEventListener('click', this.click.bind(this));
         this.button.addEventListener('click', this.readyClick.bind(this));
-        Board.initializeBoard();
+        //Board.initializeBoard();
     }
 
     readyClick() {
@@ -163,28 +174,31 @@ class Next extends newGame {
         this.clicked = false;
         this.button = document.getElementById('next');
         this.button.addEventListener('click', this.nextClick.bind(this));
+        this.button.addEventListener('click', this.click.bind(this));
     }
 
     nextClick() {
         console.log('next click');
-        Board.initializeBoard();
+        //submit.nameDisplay.textContent = '';
+        //Board.initializeBoard();
+        submit.restoreColor();
         if (Board.currentImg != false) {
-            Board.recoverAll();
-            Board.uncoverAll();
-            stopwatchSingleton.resetTimer();
-            stopwatchSingleton.startTimer();
+            Grid.recoverAll();
+            //Board.uncoverAll();
+            //stopwatchSingleton.resetTimer();
+            //stopwatchSingleton.startTimer();
             this.button.classList.add('hidden');
             submit.submit.classList.remove('hidden');
             submit.input.classList.remove('hidden');
-            submit.overlay.classList.remove('won');
+            //submit.overlay.classList.remove('won');
         } else {
-            Board.endGame();
+            Board.hideBoard();
         };
     }
 
-    nextDeactivated() {
-        next.removeEventListener('click', this.click.bind(this));
-    }
+    //nextDeactivated() {
+    //    next.removeEventListener('click', this.click.bind(this));
+   // }
 }
 
 class Submit {
@@ -194,21 +208,28 @@ class Submit {
         this.input = document.getElementById('answerText');
         this.overlay = document.getElementById('overlay');
         this.wrongCounter = 0;
+        this.nameDisplay = document.getElementById('name-display');
+    }
+
+    roundOver() {
+        this.wrongCounter = 0;
+        stopwatchSingleton.stopTimer();
+        Grid.uncoverImm();
+        Board.currentImg.time = stopwatchSingleton.getTime();
+        next.button.classList.remove('hidden');
+        this.submit.classList.add('hidden');
+        this.input.classList.add('hidden');
     }
 
     correctAnswer() {
-        this.wrongCounter = 0;
-        stopwatchSingleton.stopTimer();
+        
+        this.roundOver();
         this.overlay.classList.add('right');
+        this.correctNameDisplay();
         setTimeout(this.restoreColor,200);
         console.log('correct answer')
-        Board.uncoverImm();
-        Board.currentImg.time = stopwatchSingleton.getTime();
         Board.currentImg.won = true;
-        next.button.classList.remove('hidden');
         this.input.value = '';
-        this.submit.classList.add('hidden');
-        this.input.classList.add('hidden');
         setTimeout(this.addBorder,200);
 
     }
@@ -223,42 +244,42 @@ class Submit {
         stopwatchSingleton.penaltyIncrement();
         Board.currentImg.penalties+=1;
         this.wrongCounter++;
+        this.input.value = '';
         if (this.wrongCounter ==3) {
             setTimeout(this.wrongFinal.bind(this),200);
         }
-
-
     }
 
     wrongFinal() {
-        this.wrongCounter = 0;
+        this.roundOver();
         console.log('this is finally wrong');
         this.overlay.classList.add('wrong');
-        Board.uncoverImm();
-        stopwatchSingleton.stopTimer();
-        Board.currentImg.time = stopwatchSingleton.getTime();
-        next.button.classList.remove('hidden');
-        //this.input.value = '';
-        this.submit.classList.add('hidden');
-        this.input.classList.add('hidden');
-        Board.currentImg.won = false;
-        
+        Board.currentImg.won = false;        
     }
 
     restoreColor() {
         this.overlay.classList.remove('wrong');
         this.overlay.classList.remove('right');
+        this.overlay.classList.remove('won');
     }
 
     isCorrect() {
-        this.answer = document.getElementById('answerText').value;
+        this.answer = this.input.value;
         //this.possible = ['tzuyu', 'mina', 'sana'];
-        if (this.answer == Board.currentImg.member) {
+        if (this.answer.toLowerCase() == Board.currentImg.member) {
             this.correctAnswer();
         } else {
             this.wrongAnswer();
         };
     }
+
+    correctNameDisplay() {
+        let name = Board.currentImg.member;
+        let upper = name[0].toUpperCase();
+        name = upper + name.slice(1);
+        this.nameDisplay.textContent = name;
+        
+    };
 }
 
 class Stopwatch {
@@ -291,7 +312,7 @@ class Stopwatch {
     }
 
     penaltyIncrement() {
-        this.second = (parseInt(this.second)+10).toString();
+        this.second = (parseInt(this.second)+5).toString();
     }
 
     startTimer() {
@@ -320,14 +341,20 @@ class Stopwatch {
 //organization for multiple photos
 
 class Photo {
-    constructor() {
-        this.id = '';
-        this.url = '';
+    constructor(id) {
+        this.id = id;
+        this.url = "url('assets/images/idols/" + id + "')";
         this.played = false;
         this.won = false;
         this.member = '';
         this.time = null;
         this.penalties = 0;
+    }
+
+    getIdol() {
+        const idolMatch = this.id.match(/^(.*?)(?=\d)/);
+        this.member = idolMatch[1];
+
     }
 }
 
@@ -336,23 +363,13 @@ function createPhotoArray() {
     let photoArray = [];
     let counter = 0;
     for (const element of imgListJson) {
-        photoArray[counter] = new Photo();
-        photoArray[counter].id = element;
-        photoArray[counter].url = createURL(element);
-        photoArray[counter].member = getIdol(element);
+        photoArray[counter] = new Photo(element);
+        photoArray[counter].getIdol();
         counter++;
     }
     return photoArray;
 }
 
-function createURL(id) {
-    return "url('assets/images/idols/" + id + "')";
-}
-
-function getIdol(id) {
-    const idolMatch = id.match(/^(.*?)(?=\d)/);
-    return idolMatch[1];
-}
 
 let photos = createPhotoArray();
 let ready = new Ready();
