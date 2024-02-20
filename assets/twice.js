@@ -224,6 +224,7 @@ class Submit {
         stopwatchSingleton.stopTimer();
         Grid.uncoverImm();
         Board.currentImg.time = stopwatchSingleton.getTime();
+        this.updateCurrentIdolAvg();
         next.button.classList.remove('hidden');
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
@@ -297,6 +298,14 @@ class Submit {
         this.nameDisplay.textContent = name;
         
     };
+
+    updateCurrentIdolAvg() {
+        for (const idol of idols) {
+            if (idol.name===Board.currentImg.member) {
+                idol.updateAverageTime();
+            }
+        }
+    }
 }
 
 class Stopwatch {
@@ -395,6 +404,39 @@ class Stats {
         }
         return wonCards;
     }
+
+
+    static getBestIdol() {
+        let minAvg = Infinity;
+        let bestIdol = null;
+        for (const idol of idols) {
+            if (idol.averageTime < minAvg) {
+                minAvg = idol.averageTime;
+                bestIdol = idol.name;
+            }
+        }
+
+        return bestIdol;
+    }
+}
+
+class Idol {
+    constructor(name) {
+        this.name = name;
+        this.cards = [];
+        this.averageTime = null;
+
+    }
+
+    updateAverageTime() {
+        let totalTime = 0;
+        let playedCards = 0;
+        for (const card of this.cards) {
+            playedCards++;
+            totalTime+=card.time;
+        }
+        this.averageTime = totalTime/playedCards;
+    }
 }
 
 
@@ -409,8 +451,28 @@ function createPhotoArray() {
     return photoArray;
 }
 
+function createIdolArray(photoArray) {
+    let idolArray = [];
+    let idolAdded = false;
+    for (const photo of photoArray) {
+        for (const idol of idolArray) {
+            if (idol.name==photo.member) {
+                idol.cards.push(photo);
+                idolAdded = true;
+            }
+        }
+        if (!idolAdded) {
+            idolArray.push(new Idol(photo.member));
+            idolArray[idolArray.length-1].cards.push(photo);
+        };
+
+    };
+    return idolArray;
+};
+
 imgListJson = Grid.shuffleArray(imgListJson);
 let photos = createPhotoArray();
+let idols = createIdolArray(photos);
 let ready = new Ready();
 let submit = new Submit();
 let next = new Next();
