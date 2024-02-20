@@ -7,6 +7,10 @@
     --wrong: rgb(255,0,0, .5);
     --wrongAnswer: rgb(255,0,0, .6);
     --right: rgb(124,252,0, .5);
+    --finalPink: #fbe1dc;
+    --statPink: #e8d7d7;
+    --blueGrey: #8d92a6;
+    --brownMauve: #b07b81;
 
   }
 
@@ -116,6 +120,7 @@ body {
 
 #overlay>#name-holder>p{
     font-family: 'HughIsLifePersonalUseItalic-K7axe';
+    font-weight: 500;
     color: var(--darkPink);
     font-size: 4rem;
     text-align: center;
@@ -248,19 +253,78 @@ body>.none{
     flex:1;
 }
 
-#outro {
-    background-color: var(--darkPink);
+#note {
+    background-color: var(--finalPink);
     border-radius: 24px;
-    height: 400px;
-    width: 500px;
-    position:absolute;
-    left: 50%;
-    margin-left: -250px;
-    margin-top: 128px;
-    color:white;
+    border: solid var(--darkPink) 2px;
+    color: var(--darkPink);
+    display:block;
+    height:fit-content;
+    margin-top:12px;
+
 }
 
-#outro>p {
+#outro {
+    width: 800px;
+    position: absolute;
+    left: 0;
+    right:0;
+    margin:auto;
+    margin-top:50px;
+    display:block;
+
+}
+
+#outro>div>p {
     text-align: center;
     font-size: 1.5rem;
+    padding: 8px;
+}
+
+#outro>div>img{
+    height:50px;
+}
+
+#stats-holder {
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+}
+
+#stats-holder>.stat-image {
+    background-image: url('images/logo/stats-card.png');
+    width:250px;
+    height:375px;
+    background-size: 250px;
+    background-repeat:no-repeat;
+}
+
+.stat {
+    height: 170px;
+    width:170px;
+    background-color: var(--statPink);
+    margin-top:50%;
+    margin-left:16%;
+    border-radius:16px;
+    border: dashed 1px brown;
+    color: var(--blueGrey);
+    font-size:64px;
+    text-align: center;
+    font-weight: 700;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+
+.stat-image>#best-idol {
+    background-size:170px;
+}
+
+.stat-label {
+    font-size: 28px;
+    color: var(--brownMauve);
+    font-weight: 600;
+    text-align: center;
+    padding:8px;
 }

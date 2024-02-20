@@ -121,6 +121,7 @@ class Board {
         containerDiv.classList.add('hidden');
         const answerDiv = document.getElementById('answer');
         answerDiv.classList.add('hidden');
+        Stats.displayStats();
     };
 }
 
@@ -392,7 +393,11 @@ class Stats {
             playedCards++;
             totalTime += photo.time;
         }
-        return totalTime/playedCards;
+        let average = totalTime/playedCards
+        average = average*100;
+        average = Math.round(average);
+        average = average/100;
+        return average;
     }
 
     static getCardsWon() {
@@ -412,11 +417,23 @@ class Stats {
         for (const idol of idols) {
             if (idol.averageTime < minAvg) {
                 minAvg = idol.averageTime;
-                bestIdol = idol.name;
+                bestIdol = idol;
             }
         }
 
         return bestIdol;
+    }
+
+    static displayStats() {
+        const avgTime = document.getElementById('avg-time');
+        const bestIdolEl = document.getElementById('best-idol');
+        const numberRight = document.getElementById('number-right');
+        avgTime.textContent= this.getAverageTime();
+        numberRight.textContent = this.getCardsWon();
+        let bestIdol = this.getBestIdol();
+        let bestIdolURL = bestIdol.cards[0].url;
+        bestIdolEl.style.backgroundImage = bestIdolURL;
+
     }
 }
 
