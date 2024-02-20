@@ -3,6 +3,7 @@
 
 let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
 //let imgListJson = ["jihyo1.jpg"];
+const membersArray = ['jihyo', 'sana', 'tzuyu']
 
 class Grid {
     static shuffledArray = [];
@@ -126,12 +127,14 @@ class Board {
 class newGame {
 
     click() {
-        Board.initializeBoard();
-        submit.nameDisplay.textContent = '';
-        this.clicked = true;
-        Grid.uncoverAll();
-        stopwatchSingleton.resetTimer();
-        stopwatchSingleton.startTimer();
+        if (Board.currentImg != false) {
+            //Board.initializeBoard();
+            submit.nameDisplay.textContent = '';
+            this.clicked = true;
+            Grid.uncoverAll();
+            stopwatchSingleton.resetTimer();
+            stopwatchSingleton.startTimer();
+        };
     }
 
 };
@@ -148,7 +151,7 @@ class Ready extends newGame {
         this.button.addEventListener('mouseleave', this.unhover.bind(this));
         this.button.addEventListener('click', this.click.bind(this));
         this.button.addEventListener('click', this.readyClick.bind(this));
-        //Board.initializeBoard();
+        Board.initializeBoard();
     }
 
     readyClick() {
@@ -180,9 +183,10 @@ class Next extends newGame {
     nextClick() {
         console.log('next click');
         //submit.nameDisplay.textContent = '';
-        //Board.initializeBoard();
+        Board.initializeBoard();
         submit.restoreColor();
         if (Board.currentImg != false) {
+            console.log('this if is working')
             Grid.recoverAll();
             //Board.uncoverAll();
             //stopwatchSingleton.resetTimer();
@@ -190,8 +194,10 @@ class Next extends newGame {
             this.button.classList.add('hidden');
             submit.submit.classList.remove('hidden');
             submit.input.classList.remove('hidden');
+            submit.clearWrongAnswerDisplay();
             //submit.overlay.classList.remove('won');
         } else {
+            console.log('this is working')
             Board.hideBoard();
         };
     }
@@ -209,6 +215,8 @@ class Submit {
         this.overlay = document.getElementById('overlay');
         this.wrongCounter = 0;
         this.nameDisplay = document.getElementById('name-display');
+        this.wrongNameHolder = document.getElementById('wrong-name-holder');
+        this.wrongNameDisplay = document.getElementById('wrong-name-display')
     }
 
     roundOver() {
@@ -254,7 +262,16 @@ class Submit {
         this.roundOver();
         console.log('this is finally wrong');
         this.overlay.classList.add('wrong');
-        Board.currentImg.won = false;        
+        Board.currentImg.won = false;       
+        this.wrongNameHolder.classList.add('lost'); 
+        this.wrongNameHolder.classList.remove('none');
+        this.wrongNameDisplay.textContent =Board.currentImg.member.toUpperCase();
+    }
+
+    clearWrongAnswerDisplay() {
+        this.wrongNameHolder.classList.remove('lost');
+        this.wrongNameHolder.classList.add('none');
+        this.wrongNameDisplay.textContent = '';
     }
 
     restoreColor() {
@@ -334,8 +351,6 @@ class Stopwatch {
         let timeStr = this.second + '.' + this.centi;
         return parseFloat(timeStr);
     }
-
-
 }
 
 //organization for multiple photos
@@ -358,6 +373,30 @@ class Photo {
     }
 }
 
+class Stats {
+    static averageTime;
+    
+    static getAverageTime() {
+        let totalTime = 0
+        let playedCards = 0
+        for (const photo of photos) {
+            playedCards++;
+            totalTime += photo.time;
+        }
+        return totalTime/playedCards;
+    }
+
+    static getCardsWon() {
+        let wonCards = 0;
+        for (const photo of photos) {
+            if (photo.won) {
+                wonCards++;
+            }
+        }
+        return wonCards;
+    }
+}
+
 
 function createPhotoArray() {
     let photoArray = [];
@@ -370,12 +409,13 @@ function createPhotoArray() {
     return photoArray;
 }
 
-
+imgListJson = Grid.shuffleArray(imgListJson);
 let photos = createPhotoArray();
 let ready = new Ready();
 let submit = new Submit();
 let next = new Next();
 let stopwatchSingleton = new Stopwatch();
+
 
 
 // ...your code using `data` here...
