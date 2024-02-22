@@ -512,8 +512,9 @@ function createPhotoArray() {
 
 function createIdolArray(photoArray) {
     let idolArray = [];
-    let idolAdded = false;
+    
     for (const photo of photoArray) {
+        let idolAdded = false;
         for (const idol of idolArray) {
             if (idol.name==photo.member) {
                 idol.cards.push(photo);
