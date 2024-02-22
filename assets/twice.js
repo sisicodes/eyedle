@@ -288,7 +288,7 @@ class Submit {
         Board.currentImg.penalties+=1;
         this.wrongCounter++;
         this.input.value = '';
-        if (this.wrongCounter ==3) {
+        if (this.wrongCounter ==3 || stopwatchSingleton.lost) {
             setTimeout(this.wrongFinal.bind(this),200);
         }
     }
@@ -350,6 +350,7 @@ class Stopwatch {
         this.second = this.time.textContent.slice(0,2);
         this.centi = this.time.textContent.slice(3,5);
         this.on = undefined; 
+        this.lost= false;
     }
 
     incrementTime() {
@@ -374,10 +375,19 @@ class Stopwatch {
     }
 
     penaltyIncrement() {
+        if (parseInt(this.second)>=25) {
+            console.log('in ifffff')
+            this.second = '30'
+            this.centi = '00'
+            this.time.textContent = `${this.second}:${this.centi}`;
+            this.lost = true;
+            return;
+        }
         this.second = (parseInt(this.second)+5).toString();
     }
 
     startTimer() {
+        this.lost = false;
         let i = 1;
         this.on = setInterval(this.incrementTime.bind(this),10);
     }
