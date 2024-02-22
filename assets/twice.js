@@ -59,6 +59,7 @@ class Grid {
     }
 
     static uncoverRest() {
+        //submit.restoreColor(); putting it here removes it after the first bit but not immediately
         if (Grid.counter==25) {
             Grid.cancelUncover();
             //Grid.counter = 0;
@@ -195,6 +196,7 @@ class Next extends newGame {
         //submit.nameDisplay.textContent = '';
         Board.initializeBoard();
         submit.restoreColor();
+        submit.cancelBorder();
         if (Board.currentImg != false) {
             Grid.recoverAll();
             //Board.uncoverAll();
@@ -225,6 +227,7 @@ class Submit {
         this.nameDisplay = document.getElementById('name-display');
         this.wrongNameHolder = document.getElementById('wrong-name-holder');
         this.wrongNameDisplay = document.getElementById('wrong-name-display')
+        this.overlayTimeout = null;
         this.input.addEventListener('keypress', function(event) {
             if (event.key == 'Enter') {
                 submit.isCorrect(); //this would be nice to fix up 
@@ -238,6 +241,7 @@ class Submit {
             if(event.key=='Enter' && !newGame.playing) {
                 next.nextClick();
                 next.click();
+                event.stopPropagation();
             };
         }, { once: true });
         newGame.playing = false;
@@ -265,8 +269,11 @@ class Submit {
         setTimeout(this.restoreColor,200);
         Board.currentImg.won = true;
         this.input.value = '';
-        setTimeout(this.addBorder,200);
+        this.overlayTimeout = setTimeout(this.addBorder,200);
+    }
 
+    cancelBorder() {
+        clearTimeout(this.overlayTimeout);
     }
 
     addBorder() {
