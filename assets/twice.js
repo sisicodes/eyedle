@@ -149,6 +149,7 @@ class newGame {
             stopwatchSingleton.resetTimer();
             stopwatchSingleton.startTimer();
             newGame.playing = true;
+            submit.input.focus();
         };
     }
 
