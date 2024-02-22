@@ -1,9 +1,15 @@
 //import myJson from './idolData.json' assert {type: 'json'};
 //console.log(myJson);
 
-let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
-//let imgListJson = ["jihyo1.jpg"];
+//let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
+let imgListJson = ["dahyun3.jpg", "shiv1.JPG"];
+//let imgListJson = ["dahyun2.JPG", "jeongyeon1.jpg", "chaeyoung1.jpg", "jihyo2.jpg", "jihyo3.jpg", "dahyun3.jpg", "momo1.jpg", "momo2.jpg", "sana2.jpg", "sana3.jpg", "mina3.jpg", "mina2.jpg", "nayeon1.jpg", "tzuyu2.jpg", "nayeon2.jpg"]
+
 const membersArray = ['jihyo', 'sana', 'tzuyu']
+
+
+let body = document.querySelector('body')
+
 
 class Grid {
     static shuffledArray = [];
@@ -53,23 +59,28 @@ class Grid {
     }
 
     static uncoverRest() {
+        if (Grid.counter==25) {
+            console.log('calling cancel Uncover')
+            Grid.cancelUncover();
+            //Grid.counter = 0;
+        };
         Grid.uncoverEach(Grid.shuffledArray[Grid.counter]);
         Grid.counter++;
-        console.log('in uncover helper');
-        if (Grid.counter==this.gridSize) {
-            Grid.cancelUncover();
-        }
+        console.log(`the counter is ${Grid.counter}`)
+        
     }
 
     static uncoverImm() {
         for (const element of Grid.shuffledArray) {
             this.uncoverEach(element);
+            //Grid.counter=0;
         }
         Grid.cancelUncover();
     }
 
     static cancelUncover() {
         clearInterval(Grid.un);
+        Grid.counter=0
     };
 
 };
@@ -127,6 +138,8 @@ class Board {
 
 class newGame {
 
+    static playing = false;
+
     click() {
         if (Board.currentImg != false) {
             //Board.initializeBoard();
@@ -135,6 +148,7 @@ class newGame {
             Grid.uncoverAll();
             stopwatchSingleton.resetTimer();
             stopwatchSingleton.startTimer();
+            newGame.playing = true;
         };
     }
 
@@ -218,9 +232,22 @@ class Submit {
         this.nameDisplay = document.getElementById('name-display');
         this.wrongNameHolder = document.getElementById('wrong-name-holder');
         this.wrongNameDisplay = document.getElementById('wrong-name-display')
+        this.input.addEventListener('keypress', function(event) {
+            if (event.key == 'Enter') {
+                submit.isCorrect(); //this would be nice to fix up 
+                event.stopPropagation();
+            }
+        })
     }
 
     roundOver() {
+         body.addEventListener('keypress', function(event) {
+            if(event.key=='Enter' && !newGame.playing) {
+                next.nextClick();
+                next.click();
+            };
+        }, { once: true });
+        newGame.playing = false;
         this.wrongCounter = 0;
         stopwatchSingleton.stopTimer();
         Grid.uncoverImm();
@@ -229,6 +256,12 @@ class Submit {
         next.button.classList.remove('hidden');
         this.submit.classList.add('hidden');
         this.input.classList.add('hidden');
+        /*body.addEventListener('keypress', function(event) {
+            if(event.key=='Enter') {
+                next.nextClick();
+                next.click();
+            };
+        }, { once: true });*/
     }
 
     correctAnswer() {
@@ -284,6 +317,9 @@ class Submit {
 
     isCorrect() {
         this.answer = this.input.value;
+        if (this.answer=='') {
+            return;
+        }
         //this.possible = ['tzuyu', 'mina', 'sana'];
         if (this.answer.toLowerCase() == Board.currentImg.member) {
             this.correctAnswer();
@@ -331,8 +367,8 @@ class Stopwatch {
                 this.centi = '0' +this.centi;
             }
         };
-        if (this.second=='50') {
-            this.stopTimer();
+        if (this.second=='30') {
+            submit.wrongFinal();
         }
         this.time.textContent = `${this.second}:${this.centi}`;
         return [this.second,this.centi];
@@ -494,6 +530,7 @@ let ready = new Ready();
 let submit = new Submit();
 let next = new Next();
 let stopwatchSingleton = new Stopwatch();
+
 
 
 
