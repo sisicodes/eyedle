@@ -2,8 +2,8 @@
 //console.log(myJson);
 
 //let imgListJson = ["jihyo1.jpg", "mina1.jpg", "sana1.jpg", "tzuyu1.jpg"];
-let imgListJson = ["dahyun3.jpg", "shiv1.JPG"];
-//let imgListJson = ["dahyun2.JPG", "jeongyeon1.jpg", "chaeyoung1.jpg", "jihyo2.jpg", "jihyo3.jpg", "dahyun3.jpg", "momo1.jpg", "momo2.jpg", "sana2.jpg", "sana3.jpg", "mina3.jpg", "mina2.jpg", "nayeon1.jpg", "tzuyu2.jpg", "nayeon2.jpg"]
+//let imgListJson = ["dahyun3.jpg", "shiv1.JPG"];
+let imgListJson = ["dahyun2.JPG", "jeongyeon1.jpg", "chaeyoung1.jpg", "jihyo2.jpg", "jihyo3.jpg", "dahyun3.jpg", "momo1.jpg", "momo2.jpg", "sana2.jpg", "sana3.jpg", "mina3.jpg", "mina2.jpg", "nayeon1.jpg", "tzuyu2.jpg", "nayeon2.jpg", "shiv1.JPG"]
 
 const membersArray = ['jihyo', 'sana', 'tzuyu']
 
@@ -60,14 +60,11 @@ class Grid {
 
     static uncoverRest() {
         if (Grid.counter==25) {
-            console.log('calling cancel Uncover')
             Grid.cancelUncover();
             //Grid.counter = 0;
         };
         Grid.uncoverEach(Grid.shuffledArray[Grid.counter]);
-        Grid.counter++;
-        console.log(`the counter is ${Grid.counter}`)
-        
+        Grid.counter++;        
     }
 
     static uncoverImm() {
@@ -100,8 +97,8 @@ class Board {
 
     static updatePhoto() {
         Board.currentImg = this.findCurrentPhoto();
+        console.log(Board.currentImg.member);
         if (Board.currentImg==false) {
-            console.log('end of game')
         } else {
             Board.container = document.getElementById('container');
             Board.container.style.backgroundImage = this.currentImg.url;
@@ -111,9 +108,7 @@ class Board {
     }
 
     static findCurrentPhoto() {
-        console.log('test')
         for (const photo of photos) {
-            console.log(photo);
             if (!photo.played) {
                 return photo;
             }
@@ -197,12 +192,10 @@ class Next extends newGame {
     }
 
     nextClick() {
-        console.log('next click');
         //submit.nameDisplay.textContent = '';
         Board.initializeBoard();
         submit.restoreColor();
         if (Board.currentImg != false) {
-            console.log('this if is working')
             Grid.recoverAll();
             //Board.uncoverAll();
             //stopwatchSingleton.resetTimer();
@@ -213,7 +206,6 @@ class Next extends newGame {
             submit.clearWrongAnswerDisplay();
             //submit.overlay.classList.remove('won');
         } else {
-            console.log('this is working')
             Board.hideBoard();
         };
     }
@@ -271,7 +263,6 @@ class Submit {
         this.overlay.classList.add('right');
         this.correctNameDisplay();
         setTimeout(this.restoreColor,200);
-        console.log('correct answer')
         Board.currentImg.won = true;
         this.input.value = '';
         setTimeout(this.addBorder,200);
@@ -296,7 +287,6 @@ class Submit {
 
     wrongFinal() {
         this.roundOver();
-        console.log('this is finally wrong');
         this.overlay.classList.add('wrong');
         Board.currentImg.won = false;       
         this.wrongNameHolder.classList.add('lost'); 
@@ -437,6 +427,13 @@ class Stats {
         return average;
     }
 
+    static displayAverageTime() {
+        let averageNumber = this.getAverageTime();
+        let averageString = averageNumber.toFixed(2);
+        averageString += 's';
+        return averageString;
+    }
+
     static getCardsWon() {
         let wonCards = 0;
         for (const photo of photos) {
@@ -465,7 +462,7 @@ class Stats {
         const avgTime = document.getElementById('avg-time');
         const bestIdolEl = document.getElementById('best-idol');
         const numberRight = document.getElementById('number-right');
-        avgTime.textContent= this.getAverageTime();
+        avgTime.textContent= this.displayAverageTime();
         numberRight.textContent = this.getCardsWon();
         let bestIdol = this.getBestIdol();
         let bestIdolURL = bestIdol.cards[0].url;

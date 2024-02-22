@@ -309,7 +309,7 @@ body>.none{
     border-radius:16px;
     border: dashed 1px brown;
     color: var(--blueGrey);
-    font-size:64px;
+    font-size:56px;
     text-align: center;
     font-weight: 700;
     display:flex;
