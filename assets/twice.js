@@ -246,6 +246,7 @@ class Submit {
         }, { once: true });
         newGame.playing = false;
         this.wrongCounter = 0;
+        this.input.value = '';
         stopwatchSingleton.stopTimer();
         Grid.uncoverImm();
         Board.currentImg.time = stopwatchSingleton.getTime();
